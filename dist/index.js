@@ -812,12 +812,18 @@ async function run() {
       headers: {accept: "application/vnd.github.v3.diff"}
     });
     const prDiff = prResponse.data;
-    console.log('Pull request diff:' + prDiff)
+    console.log('Pull request diff:')
+    console.log(prDiff)
+    console.log('----------------')
 
-    const checklist = getFinalChecklist(prDiff, mappings);
-    console.log('checklist: ' + checklist)
+    const onlyAddedLines = getOnlyAddedLines(prDiff);
+    console.log('Newly added lines:')
+    console.log(onlyAddedLines)
+
+    const checklist = getFinalChecklist(onlyAddedLines, mappings);
 
     if (checklist && checklist.trim().length > 0) {
+      console.log('checklist: ' + checklist)
       octokit.issues.createComment({
         issue_number: context.payload.pull_request.number,
         owner: context.repo.owner,
@@ -871,6 +877,19 @@ const getFormattedChecklist = (checklist) => {
   }
   return formattedChecklist;
 }
+
+const getOnlyAddedLines = diff => {
+  let newLines = ''
+  const arr = diff.split('\n')
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].startsWith('+')) {
+      newLines = newLines.concat(arr[i], '\n')
+    }
+  }
+
+  return newLines;
+}
+
 
 run()
 
