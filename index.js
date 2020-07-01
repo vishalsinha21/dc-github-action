@@ -17,19 +17,22 @@ async function run() {
     core.debug((new Date()).toTimeString())
     core.setOutput('time', new Date().toTimeString());
 
-    const diff = "create index"
     const mappings = data.mappings
-
-    console.log('diff:' + diff)
-    console.log(diff)
-
     console.log('mappings: ' + mappings)
     console.log(mappings)
+
+    const prResponse = await octokit.pulls.get({
+      pull_number: context.payload.pull_request.number,
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      headers: {accept: "application/vnd.github.v3.diff"}
+    });
+    console.log(prResponse)
 
     const payload = JSON.stringify(github.context.payload, undefined, 2)
     console.log(`The event payload: ${payload}`);
 
-    const checklist = getFinalChecklist(diff, mappings);
+    const checklist = getFinalChecklist(prResponse.data, mappings);
     console.log(checklist)
 
     const context = github.context;
@@ -37,16 +40,6 @@ async function run() {
     const token = process.env.GITHUB_TOKEN || ''
     const octokit = new github.GitHub(token)
 
-
-    const prDiff = await octokit.pulls.get({
-      pull_number: context.payload.pull_request.number,
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      headers: {accept: "application/vnd.github.v3.diff"}
-    });
-
-    console.log('PR diff')
-    console.log(prDiff)
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
@@ -72,11 +65,12 @@ function getFinalChecklist(diff, mappings) {
 
 function getChecklist(diff, mappings) {
   let checklist = []
+  const diffInLowerCase = diff.toLowerCase();
 
   mappings.forEach(mapping => {
     const keywords = mapping.keywords
     for (let i = 0; i < keywords.length; i++) {
-      if (diff.toLowerCase().includes(keywords[i].toLowerCase())) {
+      if (diffInLowerCase.includes(keywords[i].toLowerCase())) {
         checklist.push(mapping.comment)
         break;
       }
