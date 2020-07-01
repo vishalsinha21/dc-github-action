@@ -6,17 +6,8 @@ const data = require('./mapping.json');
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    const ms = core.getInput('milliseconds');
-    console.log("my first change")
-    console.log(`Waiting ${ms} milliseconds ...`)
-
-    core.debug((new Date()).toTimeString())
-    await wait(parseInt(ms));
-    core.debug((new Date()).toTimeString())
-    core.setOutput('time', new Date().toTimeString());
-
     const mappings = data.mappings
-    console.log('mappings: ' + mappings)
+    console.log('mappings: ')
     console.log(mappings)
 
     const token = process.env.GITHUB_TOKEN || ''
@@ -44,6 +35,7 @@ async function run() {
       body: checklist
     })
 
+    core.setOutput('checklist', checklist);
   } catch (error) {
     core.setFailed(error.message);
   }
