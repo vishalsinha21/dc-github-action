@@ -3,7 +3,8 @@ const wait = require('./wait');
 const github = require('@actions/github');
 
 const data = require('./mapping.json');
-
+const { Octokit } = require("@octokit/rest");
+const octokit = new Octokit();
 
 // most @actions toolkit packages have async methods
 async function run() {
@@ -34,7 +35,7 @@ async function run() {
 
     const context = github.context;
 
-    github.issues.createComment({
+    octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
       owner: context.repo.owner,
       repo: context.repo.repo,
