@@ -16,10 +16,10 @@ jobs:
           content=`cat ./keyword-comments-mapping.json`
           echo "::set-output name=mapping::$content"
       - run: |
-          echo ${{ fromJson(steps.set_mapping.outputs.mapping) }}
+          echo ${{fromJson(steps.set_mapping.outputs.mapping)}}
     - uses: actions/checkout@v1
     - uses: ./
       with:
-        mapping: ${{ fromJson(steps.set_mapping.outputs.mapping) }}
+        mapping: ${{fromJson(steps.set_mapping.outputs.mapping)}}
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
