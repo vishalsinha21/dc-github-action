@@ -4,7 +4,6 @@ const github = require('@actions/github');
 
 const data = require('./mapping.json');
 const { Octokit } = require("@octokit/rest");
-const octokit = new Octokit();
 
 // most @actions toolkit packages have async methods
 async function run() {
@@ -34,6 +33,9 @@ async function run() {
     console.log(checklist)
 
     const context = github.context;
+
+    const token = process.env.GITHUB_TOKEN || ''
+    const octokit = new github.GitHub(token)
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,

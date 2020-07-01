@@ -883,7 +883,6 @@ const github = __webpack_require__(469);
 
 const data = __webpack_require__(632);
 const { Octokit } = __webpack_require__(889);
-const octokit = new Octokit();
 
 // most @actions toolkit packages have async methods
 async function run() {
@@ -913,6 +912,9 @@ async function run() {
     console.log(checklist)
 
     const context = github.context;
+
+    const token = process.env.GITHUB_TOKEN || ''
+    const octokit = new github.GitHub(token)
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
