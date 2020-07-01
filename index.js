@@ -21,6 +21,9 @@ async function run() {
     console.log('mappings: ' + mappings)
     console.log(mappings)
 
+    const token = process.env.GITHUB_TOKEN || ''
+    const octokit = new github.GitHub(token)
+
     const prResponse = await octokit.pulls.get({
       pull_number: context.payload.pull_request.number,
       owner: context.repo.owner,
@@ -36,10 +39,6 @@ async function run() {
     console.log(checklist)
 
     const context = github.context;
-
-    const token = process.env.GITHUB_TOKEN || ''
-    const octokit = new github.GitHub(token)
-
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
