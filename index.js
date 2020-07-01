@@ -35,10 +35,18 @@ async function run() {
     const context = github.context;
 
     const token = process.env.GITHUB_TOKEN || ''
-    console.log('token: ' + token)
-
     const octokit = new github.GitHub(token)
-    console.log(octokit)
+
+
+    const data = await octokit.pullRequests.get({
+      issue_number: context.payload.pull_request.number,
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      headers: {accept: "application/vnd.github.v3.diff"}
+    });
+
+    console.log('PR diff')
+    console.log(data)
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
