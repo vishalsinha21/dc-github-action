@@ -1,17 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const fs = require('fs');
-const path = require('path')
 
 async function run() {
   try {
 
-    const mappingFile = core.getInput('mappingFile')
-    console.log('mappingFile: ' + mappingFile)
-
-    const filePath = path.resolve(mappingFile)
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    const mappings = data.mappings
+    const mappings = core.getInput('mapping')
     console.log('keyword to comment mappings found: ')
     console.log(mappings)
 

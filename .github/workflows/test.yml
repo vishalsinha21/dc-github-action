@@ -11,9 +11,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - id: set_mapping
+        run: |
+          content=`cat ./keyword-comments-mapping.json`
+          echo "::set-output name=mapping::$content"
+      - run: |
+          echo "${{ fromJson(steps.set_mapping.outputs.mapping) }}"
     - uses: actions/checkout@v1
     - uses: ./
       with:
-        mappingFile: 'keyword-comments-mapping.json'
+        mapping: ${{ fromJson(steps.set_mapping.outputs.mapping) }}
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
