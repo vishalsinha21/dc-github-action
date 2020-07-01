@@ -789,7 +789,6 @@ const wait = __webpack_require__(949);
 const github = __webpack_require__(469);
 const data = __webpack_require__(632);
 
-// most @actions toolkit packages have async methods
 async function run() {
   try {
     const mappings = data.mappings
@@ -828,14 +827,14 @@ async function run() {
 }
 
 
-function getFinalChecklist(diff, mappings) {
+const getFinalChecklist = (diff, mappings) => {
   let checklist = getChecklist(diff, mappings);
   let formattedChecklist = getFormattedChecklist(checklist);
   return formattedChecklist;
 }
 
 
-function getChecklist(diff, mappings) {
+const getChecklist = (diff, mappings) => {
   let checklist = []
   const diffInLowerCase = diff.toLowerCase();
 
@@ -852,7 +851,7 @@ function getChecklist(diff, mappings) {
 }
 
 
-function getFormattedChecklist(checklist) {
+const getFormattedChecklist = (checklist) => {
   let formattedChecklist = '';
   if (checklist.length > 0) {
     formattedChecklist = '**Checklist:**'
