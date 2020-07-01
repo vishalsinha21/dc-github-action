@@ -61,6 +61,7 @@ const wait = __webpack_require__(949);
 async function run() {
   try { 
     const ms = core.getInput('milliseconds');
+    console.log("my first change")
     console.log(`Waiting ${ms} milliseconds ...`)
 
     core.debug((new Date()).toTimeString())
