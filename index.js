@@ -7,7 +7,7 @@ async function run() {
   try {
 
     const mappingFile = core.getInput('mappingFile')
-    console.log('mappingFile:' + mappingFile)
+    console.log('mappingFile: ' + mappingFile)
 
     const filePath = path.resolve(mappingFile)
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -29,14 +29,18 @@ async function run() {
     console.log('Pull request diff:' + prDiff)
 
     const checklist = getFinalChecklist(prDiff, mappings);
-    console.log(checklist)
+    console.log('checklist: ' + checklist)
 
-    octokit.issues.createComment({
-      issue_number: context.payload.pull_request.number,
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      body: checklist
-    })
+    if (checklist && checklist.trim().length > 0) {
+      octokit.issues.createComment({
+        issue_number: context.payload.pull_request.number,
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        body: checklist
+      })
+    } else {
+      console.log("No dynamic checklist was created based on code difference and mapping file")
+    }
 
     core.setOutput('checklist', checklist);
   } catch (error) {
