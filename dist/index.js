@@ -917,8 +917,8 @@ async function run() {
     const octokit = new github.GitHub(token)
 
 
-    const prDiff = await octokit.pullRequests.get({
-      issue_number: context.payload.pull_request.number,
+    const prDiff = await octokit.pulls.get({
+      pull_number: context.payload.pull_request.number,
       owner: context.repo.owner,
       repo: context.repo.repo,
       headers: {accept: "application/vnd.github.v3.diff"}
