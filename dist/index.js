@@ -917,7 +917,7 @@ async function run() {
     const octokit = new github.GitHub(token)
 
 
-    const data = await octokit.pullRequests.get({
+    const prDiff = await octokit.pullRequests.get({
       issue_number: context.payload.pull_request.number,
       owner: context.repo.owner,
       repo: context.repo.repo,
@@ -925,7 +925,7 @@ async function run() {
     });
 
     console.log('PR diff')
-    console.log(data)
+    console.log(prDiff)
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
