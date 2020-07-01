@@ -14,6 +14,6 @@ jobs:
     - uses: actions/checkout@v1
     - uses: ./
       with:
-        mappingFile: 'mapping.json'
+        mappingFile: 'keyword-comments-mapping'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

@@ -787,6 +787,7 @@ exports.RequestError = RequestError;
 const core = __webpack_require__(470);
 const github = __webpack_require__(469);
 const fs = __webpack_require__(747);
+const path = __webpack_require__(622)
 
 async function run() {
   try {
@@ -794,7 +795,8 @@ async function run() {
     const mappingFile = core.getInput('mappingFile')
     console.log(mappingFile)
 
-    const data = JSON.parse(fs.readFileSync(mappingFile, 'utf8'));
+    const filePath = path.resolve(mappingFile)
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const mappings = data.mappings
     console.log('mappings: ')
     console.log(mappings)

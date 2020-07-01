@@ -11,6 +11,10 @@
     {
       "keywords": ["RequestMapping", "GetMapping", "PostMapping", "PutMapping"],
       "comment": "Endpoint URLs exposed by application use only small case"
+    },
+    {
+      "keywords": ["keyword1", "keyword2"],
+      "comment": "Expert comment"
     }
   ]
 }
