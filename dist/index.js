@@ -786,18 +786,11 @@ exports.RequestError = RequestError;
 
 const core = __webpack_require__(470);
 const github = __webpack_require__(469);
-const fs = __webpack_require__(747);
-const path = __webpack_require__(622)
 
 async function run() {
   try {
 
-    const mappingFile = core.getInput('mappingFile')
-    console.log('mappingFile: ' + mappingFile)
-
-    const filePath = path.resolve(mappingFile)
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    const mappings = data.mappings
+    const mappings = core.getInput('mapping')
     console.log('keyword to comment mappings found: ')
     console.log(mappings)
 
