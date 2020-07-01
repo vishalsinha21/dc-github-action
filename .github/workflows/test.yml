@@ -13,7 +13,7 @@ jobs:
     steps:
     - id: set_mapping
       run: |
-        content=`cat ./keyword-comments-mapping.json`
+        content=`cat keyword-comments-mapping.json`
         echo ::set-output name=mapping::$content
     - uses: actions/checkout@v1
     - uses: ./
