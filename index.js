@@ -1,10 +1,14 @@
 const core = require('@actions/core');
-const wait = require('./wait');
 const github = require('@actions/github');
-const data = require('./mapping.json');
+const fs = require('fs');
 
 async function run() {
   try {
+
+    const mappingFile = core.getInput('mappingFile')
+    console.log(mappingFile)
+
+    const data = JSON.parse(fs.readFileSync(mappingFile, 'utf8'));
     const mappings = data.mappings
     console.log('mappings: ')
     console.log(mappings)

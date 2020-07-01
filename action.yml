@@ -1,10 +1,10 @@
 name: 'Wait'
 description: 'Wait a designated number of milliseconds'
 inputs:
-  milliseconds:
-    description: 'number of milliseconds to wait'
+  mappingFile:
+    description: 'mapping of keywords with comment'
     required: true
-    default: '1000'
+    default: 'mapping.json'
 outputs:
   checklist:
     description: 'The final checklist in md format'

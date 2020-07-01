@@ -785,12 +785,16 @@ exports.RequestError = RequestError;
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
 const core = __webpack_require__(470);
-const wait = __webpack_require__(949);
 const github = __webpack_require__(469);
-const data = __webpack_require__(632);
+const fs = __webpack_require__(747);
 
 async function run() {
   try {
+
+    const mappingFile = core.getInput('mappingFile')
+    console.log(mappingFile)
+
+    const data = JSON.parse(fs.readFileSync(mappingFile, 'utf8'));
     const mappings = data.mappings
     console.log('mappings: ')
     console.log(mappings)
@@ -20914,13 +20918,6 @@ module.exports = isPlainObject;
 
 /***/ }),
 
-/***/ 632:
-/***/ (function(module) {
-
-module.exports = {"mappings":[{"keywords":["create index","createIndex"],"comment":"Indexes have been created concurrently in big tables"},{"keywords":["connection","session","CloseableHttpClient","HttpClient"],"comment":"Resources have been closed in finally block or using try-with-resources"},{"keywords":["RequestMapping","GetMapping","PostMapping","PutMapping"],"comment":"Endpoint URLs exposed by application use only small case"}]};
-
-/***/ }),
-
 /***/ 649:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -23993,24 +23990,6 @@ module.exports = function(fn) {
 	try { return fn() } catch (e) {}
 
 }
-
-/***/ }),
-
-/***/ 949:
-/***/ (function(module) {
-
-let wait = function(milliseconds) {
-  return new Promise((resolve, reject) => {
-    if (typeof(milliseconds) !== 'number') { 
-      throw new Error('milleseconds not a number'); 
-    }
-
-    setTimeout(() => resolve("done!"), milliseconds)
-  });
-}
-
-module.exports = wait;
-
 
 /***/ }),
 
