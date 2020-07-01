@@ -35,7 +35,10 @@ async function run() {
     const context = github.context;
 
     const token = process.env.GITHUB_TOKEN || ''
+    console.log('token: ' + token)
+
     const octokit = new github.GitHub(token)
+    console.log(octokit)
 
     octokit.issues.createComment({
       issue_number: context.payload.pull_request.number,
