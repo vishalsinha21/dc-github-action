@@ -793,12 +793,12 @@ async function run() {
   try {
 
     const mappingFile = core.getInput('mappingFile')
-    console.log(mappingFile)
+    console.log('mappingFile:' + mappingFile)
 
     const filePath = path.resolve(mappingFile)
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const mappings = data.mappings
-    console.log('mappings: ')
+    console.log('keyword to comment mappings found: ')
     console.log(mappings)
 
     const token = process.env.GITHUB_TOKEN || ''
@@ -811,12 +811,10 @@ async function run() {
       repo: context.repo.repo,
       headers: {accept: "application/vnd.github.v3.diff"}
     });
-    console.log(prResponse)
+    const prDiff = prResponse.data;
+    console.log('Pull request diff:' + prDiff)
 
-    const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
-
-    const checklist = getFinalChecklist(prResponse.data, mappings);
+    const checklist = getFinalChecklist(prDiff, mappings);
     console.log(checklist)
 
     octokit.issues.createComment({
