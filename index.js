@@ -7,12 +7,12 @@ async function run() {
   try {
 
     const mappingFile = core.getInput('mappingFile')
-    console.log(mappingFile)
+    console.log('mappingFile: ' + mappingFile)
 
     const filePath = path.resolve(mappingFile)
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const mappings = data.mappings
-    console.log('mappings: ')
+    console.log('keyword to comment mappings found: ')
     console.log(mappings)
 
     const token = process.env.GITHUB_TOKEN || ''
@@ -25,20 +25,28 @@ async function run() {
       repo: context.repo.repo,
       headers: {accept: "application/vnd.github.v3.diff"}
     });
-    console.log(prResponse)
+    const prDiff = prResponse.data;
+    console.log('Pull request diff:')
+    console.log(prDiff)
+    console.log('----------------')
 
-    const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
+    const onlyAddedLines = getOnlyAddedLines(prDiff);
+    console.log('Newly added lines:')
+    console.log(onlyAddedLines)
 
-    const checklist = getFinalChecklist(prResponse.data, mappings);
-    console.log(checklist)
+    const checklist = getFinalChecklist(onlyAddedLines, mappings);
 
-    octokit.issues.createComment({
-      issue_number: context.payload.pull_request.number,
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      body: checklist
-    })
+    if (checklist && checklist.trim().length > 0) {
+      console.log('checklist: ' + checklist)
+      octokit.issues.createComment({
+        issue_number: context.payload.pull_request.number,
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        body: checklist
+      })
+    } else {
+      console.log("No dynamic checklist was created based on code difference and mapping file")
+    }
 
     core.setOutput('checklist', checklist);
   } catch (error) {
@@ -83,5 +91,18 @@ const getFormattedChecklist = (checklist) => {
   }
   return formattedChecklist;
 }
+
+const getOnlyAddedLines = diff => {
+  let newLines = ''
+  const arr = diff.split('\n')
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].startsWith('+')) {
+      newLines = newLines.concat(arr[i], '\n')
+    }
+  }
+
+  return newLines;
+}
+
 
 run()
