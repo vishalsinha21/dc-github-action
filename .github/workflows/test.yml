@@ -13,6 +13,6 @@ jobs:
     - uses: actions/checkout@v1
     - uses: ./
       with:
-        mapping: ${{fromJson('{ "mappings": [ { "keywords": ["create index", "createIndex"], "comment": "Indexes have been created concurrently in big tables" } ] }')}}
+        mapping: ${{fromJson('{ \"mappings\": [ { \"keywords\": [\"create index\", \"createIndex\"], \"comment\": \"Indexes have been created concurrently in big tables\" } ] }')}}
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
