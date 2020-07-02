@@ -3,112 +3,83 @@
   <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
 </p>
 
-# Create a JavaScript Action
+# Dynamic checklist
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+Tests are nice, but they are not written for everything, especially when they seem obvious. 
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.  
+For example, it's a best practice to close resources in finally block but this is not usually tested through a test case.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+Or may be you are creating index, which is ok if it's a small table, but it should be created concurrently for big tables so that rows are not locked for long time in production.
 
-## Create an action from this template
+This action provides that safety net, or an extra set of eyes.
 
-Click the `Use this Template` and provide the new repo details for your action
+It will analyze the code for given keywords, given by you and will create a point in the checklist if that keyword is found in the code.
 
-## Code in Master
+You can have multiple keywords map to same comment.
 
-Install the dependencies  
-```bash
-$ npm install
+And that's the only input for this action. A mapping file which contains mapping of keywords to comments.
+
+Example mapping.json
+
 ```
-
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-const core = require('@actions/core');
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
+{
+  "mappings": [
+    {
+      "keywords": ["create index", "createIndex"],
+      "comment": "Indexes have been created concurrently in big tables"
+    },
+    {
+      "keywords": ["connection", "session", "CloseableHttpClient", "HttpClient"],
+      "comment": "Resources have been closed in finally block or using try-with-resources"
+    },
+    {
+      "keywords": ["RequestMapping", "GetMapping", "PostMapping", "PutMapping"],
+      "comment": "Endpoint URLs exposed by application use only small case"
+    },
+    {
+      "keywords": ["keyword1", "keyword2"],
+      "comment": "Expert comment"
+    }
+  ]
 }
-
-run()
 ```
 
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
 
-## Package for distribution
+The output of this action is a formatted checklist in md format, like this:
 
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
+**Checklist:**
+- [ ] Indexes have been created concurrently in big tables
+- [ ] Resources have been closed in finally block or using try-with-resources
+- [ ] Endpoint URLs exposed by application use only small case
+- [ ] Expert comment
 
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
 
-Run package
+This action will analyze the diff of the pull request, and based on the diff and mapping file given by you, will comment on the PR with dynamic checklist, hence the name.
 
-```bash
-npm run package
+Example to configure it:
+
+```
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  checklist_job:
+    runs-on: ubuntu-latest
+    name: A job to create dynamic checklist
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Dynamic checklist action
+        id: dynamic_checklist
+        uses: vishalsinha21/dc-github-action@v4
+        with:
+          mappingFile: 'mapping.json'
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Get the output checklist
+        run: echo "The final checklist ${{ steps.dynamic_checklist.outputs.checklist }}"
+
 ```
 
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-$ git checkout -b v1
-$ git commit -a -m "v1 release"
-```
-
-```bash
-$ git push origin v1
-```
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage
-
-You can now consume the action by referencing the v1 branch
-
-```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
