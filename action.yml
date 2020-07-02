@@ -1,5 +1,5 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Dynamic checklist'
+description: 'Analyzes code and creates a dynamic checklist by commenting on PR'
 inputs:
   mapping:
     description: 'json object of mapping of keywords with comment'
