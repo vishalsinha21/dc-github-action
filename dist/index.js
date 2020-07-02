@@ -784,16 +784,15 @@ exports.RequestError = RequestError;
 /***/ 104:
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
+const Checklist = __webpack_require__(683)
+
 const core = __webpack_require__(470);
 const github = __webpack_require__(469);
 const fs = __webpack_require__(747);
 const path = __webpack_require__(622)
-const checklist = __webpack_require__(683)
 
 async function run() {
   try {
-
-    checklist.getOnlyAddedLines('');
 
     const mappingFile = core.getInput('mappingFile')
     console.log('mappingFile: ' + mappingFile)
@@ -819,11 +818,11 @@ async function run() {
     console.log(prDiff)
     console.log('----------------')
 
-    const onlyAddedLines = checklist.getOnlyAddedLines(prDiff);
+    const onlyAddedLines = Checklist.getOnlyAddedLines(prDiff);
     console.log('Newly added lines:')
     console.log(onlyAddedLines)
 
-    const checklist = checklist.getFinalChecklist(onlyAddedLines, mappings);
+    const checklist = Checklist.getFinalChecklist(onlyAddedLines, mappings);
 
     if (checklist && checklist.trim().length > 0) {
       console.log('checklist: ' + checklist)
@@ -842,8 +841,6 @@ async function run() {
     core.setFailed(error.message);
   }
 }
-
-
 
 run()
 
@@ -20989,29 +20986,25 @@ module.exports = function btoa(str) {
 /***/ 683:
 /***/ (function(module) {
 
-const getFinalChecklist = (diff, mappings) => {
-  let checklist = getChecklist(diff, mappings);
-  let formattedChecklist = getFormattedChecklist(checklist);
-  return formattedChecklist;
-}
-
-
 const getChecklist = (diff, mappings) => {
   let checklist = []
-  const diffInLowerCase = diff.toLowerCase();
 
-  mappings.forEach(mapping => {
-    const keywords = mapping.keywords
-    for (let i = 0; i < keywords.length; i++) {
-      if (diffInLowerCase.includes(keywords[i].toLowerCase())) {
-        checklist.push(mapping.comment)
-        break;
+  if (diff && mappings) {
+    const diffInLowerCase = diff.toLowerCase();
+
+    mappings && mappings.forEach(mapping => {
+      const keywords = mapping.keywords
+      for (let i = 0; i < keywords.length; i++) {
+        if (diffInLowerCase.includes(keywords[i].toLowerCase())) {
+          checklist.push(mapping.comment)
+          break;
+        }
       }
-    }
-  })
+    })
+  }
+
   return checklist;
 }
-
 
 const getFormattedChecklist = (checklist) => {
   let formattedChecklist = '';
@@ -21026,20 +21019,35 @@ const getFormattedChecklist = (checklist) => {
   return formattedChecklist;
 }
 
+const getFinalChecklist = (diff, mappings) => {
+  let checklist = getChecklist(diff, mappings);
+  let formattedChecklist = getFormattedChecklist(checklist);
+  return formattedChecklist;
+}
 
-module.exports.getOnlyAddedLines = diff => {
+const getOnlyAddedLines = diff => {
   let newLines = ''
-  const arr = diff.split('\n')
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].startsWith('+')) {
-      newLines = newLines.concat(arr[i], '\n')
+
+  if (diff != null) {
+    const arr = diff.split('\n')
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].startsWith('+')) {
+        newLines = newLines.concat(arr[i], '\n')
+      }
     }
+  } else {
+    return null;
   }
 
   return newLines;
 }
 
-
+module.exports = {
+  getFinalChecklist,
+  getChecklist,
+  getFormattedChecklist,
+  getOnlyAddedLines
+}
 
 
 /***/ }),
