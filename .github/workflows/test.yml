@@ -7,7 +7,6 @@ on:
       - 'releases/*'
 
 jobs:
-  # test action works running from the graph
   test:
     runs-on: ubuntu-latest
     steps:
@@ -15,6 +14,8 @@ jobs:
       run: |
         content=`cat keyword-comments-mapping.json`
         echo ::set-output name=mapping::$content
+    - run: |
+      echo ${{fromJson(steps.set_mapping.outputs.mapping)}}
     - uses: actions/checkout@v1
     - uses: ./
       with:

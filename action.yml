@@ -2,7 +2,7 @@ name: 'Wait'
 description: 'Wait a designated number of milliseconds'
 inputs:
   mapping:
-    description: 'mapping of keywords with comment'
+    description: 'json object of mapping of keywords with comment'
     required: true
 outputs:
   checklist:
