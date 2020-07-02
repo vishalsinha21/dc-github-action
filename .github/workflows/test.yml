@@ -13,8 +13,8 @@ jobs:
     steps:
       - id: set_var
         run: |
-          ls
-          content=`cat ./keyword-comments-mapping.json`
+          echo `ls`
+          content=`cat keyword-comments-mapping.json`
           echo "::set-output name=packageJson::$content"
       - run: |
           echo "${{fromJson(steps.set_var.outputs.packageJson)}}"
