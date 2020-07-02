@@ -10,12 +10,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v1
+    - uses: ./
     - id: set_mapping
       run: |
         content=`cat keyword-comments-mapping.json`
         echo ::set-output name=mapping::$content
-    - uses: actions/checkout@v1
-    - uses: ./
       with:
         mapping: ${{fromJson(steps.set_mapping.outputs.mapping)}}
       env:
