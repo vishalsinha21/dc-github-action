@@ -16,5 +16,5 @@ jobs:
           content=`cat ./keyword-comments-mapping.json`
           echo "::set-output name=packageJson::$content"
       - run: |
-        echo "${{fromJson(steps.set_var.outputs.packageJson)}}"
+          echo "${{fromJson(steps.set_var.outputs.packageJson)}}"
 
